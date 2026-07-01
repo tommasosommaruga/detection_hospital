@@ -1,0 +1,31 @@
+# Default configuration for the digital pathology assistant.
+# Nothing clinical is hardcoded in the code itself; tune the workflow here.
+
+tiling:
+  # Size (pixels) of the square tiles a whole-slide image is cut into.
+  tile_size: 256
+  # Overlap between adjacent tiles (0.0 = no overlap, 0.5 = half-tile stride).
+  overlap: 0.0
+  # Tiles whose mean intensity is above this (near-white background) are skipped.
+  background_intensity_cutoff: 220
+
+triage:
+  # A tile counts as "suspicious" once its score crosses this threshold.
+  suspicious_tile_threshold: 0.5
+  # Case-level priority buckets, evaluated top-down on the case malignancy score.
+  priority_bands:
+    - {name: URGENT, min_score: 0.85}
+    - {name: HIGH, min_score: 0.60}
+    - {name: ROUTINE, min_score: 0.0}
+  # How many top suspicious regions to surface in the report.
+  max_review_regions: 10
+
+report:
+  # Probabilities are only advisory; this text is stamped on every draft.
+  disclaimer: >-
+    DECISION SUPPORT DRAFT - not a diagnosis. All findings require review and
+    approval by a qualified pathologist before entering the medical record.
+
+audit:
+  # Where run records / review decisions are written (kept out of git).
+  store_dir: runs

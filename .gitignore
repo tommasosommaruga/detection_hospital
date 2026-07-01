@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Data & model artifacts (never commit patient data or large binaries)
+data/
+!data/.gitkeep
+models/
+!models/.gitkeep
+outputs/
+!outputs/.gitkeep
+*.svs
+*.tif
+*.tiff
+*.ndpi
+*.pt
+*.pth
+*.onnx
+
+# Audit / run logs generated at runtime
+runs/
+*.log
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
