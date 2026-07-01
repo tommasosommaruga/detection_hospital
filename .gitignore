@@ -8,7 +8,8 @@ dist/
 .venv/
 venv/
 env/
-
+.cache
+.firecrawl
 # Data & model artifacts (never commit patient data or large binaries)
 data/
 !data/.gitkeep
