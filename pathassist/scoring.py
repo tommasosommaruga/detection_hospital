@@ -95,5 +95,62 @@ class TorchScorer:
         batch = tiles_to_batch([pixels for _, pixels in chunk]).to(self.device)
         probs = torch.sigmoid(self._model(batch)).detach().cpu().numpy()
         for (tile, _), prob in zip(chunk, probs):
-          results.append(TileScore(tile=tile, score=float(prob)))
+          score = float(prob)
+          uncertainty = 1.0 - abs(score - 0.5) * 2.0
+          results.append(
+            TileScore(tile=tile, score=score, uncertainty=uncertainty)
+          )
+    return results
+
+
+class EnsembleScorer:
+  """Runs a weighted ensemble checkpoint with uncertainty and disagreement."""
+
+  def __init__(
+    self,
+    checkpoint_path: str,
+    device_preference: str = "auto",
+    batch_size: int = 32,
+  ) -> None:
+    from .device import resolve_device
+    from .ensemble import load_ensemble_checkpoint
+
+    self.device = resolve_device(device_preference)
+    self._ensemble, metadata = load_ensemble_checkpoint(
+      checkpoint_path, device=self.device
+    )
+    self._batch_size = batch_size
+    self.name = "ensemble-voter"
+    metrics = metadata.get("metrics") or {}
+    test_acc = metrics.get("test_acc")
+    version_bits = [f"{self._ensemble.n_models} models"]
+    if test_acc is not None:
+      version_bits.append(f"test_acc={test_acc:.3f}")
+    self.version = ", ".join(version_bits)
+
+  def score_tiles(self, tiles: list[tuple[Tile, np.ndarray]]) -> list[TileScore]:
+    if not tiles:
+      return []
+
+    results: list[TileScore] = []
+    for start in range(0, len(tiles), self._batch_size):
+      chunk = tiles[start : start + self._batch_size]
+      pixel_arrays = [pixels for _, pixels in chunk]
+      vote = self._ensemble.predict_batch(
+        pixel_arrays, self.device, batch_size=self._batch_size
+      )
+      for (tile, _), prob, disagreement in zip(
+        chunk, vote["prob"], vote["disagreement"]
+      ):
+        score = float(prob)
+        borderline = 1.0 - abs(score - 0.5) * 2.0
+        uncertainty = min(1.0, float(disagreement) + 0.5 * borderline)
+        results.append(
+          TileScore(
+            tile=tile,
+            score=score,
+            uncertainty=uncertainty,
+            disagreement=float(disagreement),
+          )
+        )
     return results

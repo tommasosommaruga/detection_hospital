@@ -1,0 +1,21 @@
+services:
+  pathassist:
+    build: .
+    ports:
+      - "8765:8765"
+    env_file:
+      - .env
+    environment:
+      PATHASSIST_ENV: production
+      PATHASSIST_REQUIRE_CHECKPOINT: "true"
+    volumes:
+      - ./models:/app/models:ro
+      - ./outputs:/app/outputs
+      - ./runs:/app/runs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/health/ready')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    restart: unless-stopped

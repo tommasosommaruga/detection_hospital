@@ -1,0 +1,177 @@
+# Organ registry — one specialized model checkpoint per organ system.
+# Train with: python -m pathassist.train --organ <id> --source folder --data-dir ...
+# Only organs with a checkpoint on disk are marked model_ready at runtime.
+
+default_organ: gastrointestinal
+
+organs:
+  lymph_node:
+    name: Lymph Node
+    specialty: Hematolymphoid
+    task: Metastasis detection (PatchCamelyon / CAMELYON)
+    stain: H&E
+    checkpoint: models/lymph_node/ensemble.pt
+    config: pcam_test.yaml
+    aliases: [lymph, lymph-node, lymphnode, camelyon, pcam, hematolymphoid]
+
+  breast:
+    name: Breast
+    specialty: Breast
+    task: Malignancy detection in breast H&E patches
+    stain: H&E
+    checkpoint: models/breast/ensemble.pt
+    config: default.yaml
+    aliases: [mammary, breast_cancer]
+
+  cancer_genomics:
+    name: Cancer Genomics
+    specialty: Cancer Genomics
+    task: Genomics-correlated histology (requires dedicated labels)
+    stain: H&E
+    checkpoint: models/cancer_genomics/ensemble.pt
+    config: default.yaml
+    aliases: [genomics, molecular]
+
+  cardiovascular:
+    name: Cardiovascular
+    specialty: Cardiovascular
+    task: Cardiac / vascular tissue malignancy screening
+    stain: H&E
+    checkpoint: models/cardiovascular/ensemble.pt
+    config: default.yaml
+    aliases: [cardiac, heart, vascular]
+
+  cytopathology:
+    name: Cytopathology
+    specialty: Cytopathology
+    task: Cytology specimen screening
+    stain: Pap / liquid-based
+    checkpoint: models/cytopathology/ensemble.pt
+    config: default.yaml
+    aliases: [cytology, pap]
+
+  dermatopathology:
+    name: Dermatopathology
+    specialty: Dermatopathology
+    task: Skin lesion malignancy detection
+    stain: H&E
+    checkpoint: models/dermatopathology/ensemble.pt
+    config: default.yaml
+    aliases: [skin, derm]
+
+  endocrine:
+    name: Endocrine
+    specialty: Endocrine
+    task: Endocrine organ malignancy detection
+    stain: H&E
+    checkpoint: models/endocrine/ensemble.pt
+    config: default.yaml
+    aliases: [thyroid, adrenal, pituitary]
+
+  gastrointestinal:
+    name: Gastrointestinal
+    specialty: Gastrointestinal
+    task: Colon tumor vs normal mucosa (NCT-CRC-HE)
+    stain: H&E
+    checkpoint: models/gastrointestinal/ensemble.pt
+    config: gi_crc.yaml
+    aliases: [gi, colon, colorectal, stomach, bowel]
+
+  genitourinary:
+    name: Genitourinary
+    specialty: Genitourinary
+    task: GU tract malignancy detection
+    stain: H&E
+    checkpoint: models/genitourinary/ensemble.pt
+    config: default.yaml
+    aliases: [gu, prostate, kidney, bladder, renal]
+
+  gynecologic:
+    name: Gynecologic
+    specialty: Gynecologic
+    task: Gynecologic malignancy detection
+    stain: H&E
+    checkpoint: models/gynecologic/ensemble.pt
+    config: default.yaml
+    aliases: [gyn, cervical, ovarian, uterine]
+
+  head_neck:
+    name: Head & Neck
+    specialty: Head & Neck
+    task: Head and neck malignancy detection
+    stain: H&E
+    checkpoint: models/head_neck/ensemble.pt
+    config: default.yaml
+    aliases: [head-neck, headneck, hn, head_and_neck]
+
+  hematopathology:
+    name: Hematopathology
+    specialty: Hematopathology
+    task: Bone marrow / lymphoid malignancy detection
+    stain: H&E
+    checkpoint: models/hematopathology/ensemble.pt
+    config: default.yaml
+    aliases: [heme, bone_marrow, marrow]
+
+  infectious_disease:
+    name: Infectious Disease
+    specialty: Infectious Disease
+    task: Infectious pattern screening in tissue
+    stain: H&E
+    checkpoint: models/infectious_disease/ensemble.pt
+    config: default.yaml
+    aliases: [infection, infectious]
+
+  mediastinum:
+    name: Mediastinum
+    specialty: Mediastinum
+    task: Mediastinal mass / thymic screening
+    stain: H&E
+    checkpoint: models/mediastinum/ensemble.pt
+    config: default.yaml
+    aliases: [thymus, mediastinal]
+
+  neuropathology:
+    name: Neuropathology
+    specialty: Neuropathology
+    task: CNS tumor screening
+    stain: H&E
+    checkpoint: models/neuropathology/ensemble.pt
+    config: default.yaml
+    aliases: [brain, cns, neuro]
+
+  orthopedic:
+    name: Orthopedic
+    specialty: Orthopedic
+    task: Bone / joint lesion screening
+    stain: H&E
+    checkpoint: models/orthopedic/ensemble.pt
+    config: default.yaml
+    aliases: [bone, ortho, musculoskeletal]
+
+  peritoneal:
+    name: Peritoneal
+    specialty: Peritoneal
+    task: Peritoneal malignancy detection
+    stain: H&E
+    checkpoint: models/peritoneal/ensemble.pt
+    config: default.yaml
+    aliases: [peritoneum, ascites]
+
+  pulmonary:
+    name: Pulmonary
+    specialty: Pulmonary
+    task: Lung malignancy detection
+    stain: H&E
+    checkpoint: models/pulmonary/ensemble.pt
+    config: default.yaml
+    aliases: [lung, pulm, thoracic]
+
+  soft_tissue:
+    name: Soft Tissue
+    specialty: Soft Tissue
+    task: Soft-tissue sarcoma screening
+    stain: H&E
+    checkpoint: models/soft_tissue/ensemble.pt
+    config: default.yaml
+    aliases: [sarcoma, soft-tissue]

@@ -102,3 +102,30 @@ class AuditStore:
     and the seed corpus for retraining.
     """
     return [d for d in self.load_decisions() if d.get("decision") in ("modify", "reject")]
+
+  def export_corrections(self, output_path: str | Path) -> Path:
+    """Export pathologist corrections for continuous-learning / retraining."""
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    latest_results: dict[str, dict[str, Any]] = {}
+    for record in self.load_results():
+      result = record["result"]
+      latest_results[result["case_id"]] = record
+
+    lines = [
+      "case_id,decision,reviewer,note,timestamp,case_score,priority,model_name"
+    ]
+    for decision in self.disagreements():
+      case_id = decision["case_id"]
+      result_record = latest_results.get(case_id, {})
+      result = result_record.get("result", {})
+      note = str(decision.get("note", "")).replace(",", ";")
+      lines.append(
+        f"{case_id},{decision['decision']},{decision['reviewer']},{note},"
+        f"{decision.get('timestamp', '')},{result.get('case_score', '')},"
+        f"{result.get('priority', '')},{result.get('model_name', '')}"
+      )
+
+    output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return output_path

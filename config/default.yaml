@@ -2,30 +2,42 @@
 # Nothing clinical is hardcoded in the code itself; tune the workflow here.
 
 tiling:
-  # Size (pixels) of the square tiles a whole-slide image is cut into.
   tile_size: 256
-  # Overlap between adjacent tiles (0.0 = no overlap, 0.5 = half-tile stride).
   overlap: 0.0
-  # Tiles whose mean intensity is above this (near-white background) are skipped.
   background_intensity_cutoff: 220
+  wsi_full_res: true
+  target_mpp: 0.5
+  wsi_max_tiles: 5000
+  thumbnail_max_side: 2048
 
 triage:
-  # A tile counts as "suspicious" once its score crosses this threshold.
   suspicious_tile_threshold: 0.5
-  # Case-level priority buckets, evaluated top-down on the case malignancy score.
+  detection_threshold: 0.30
+  min_review_score: 0.15
+  case_score_mode: max
+  uncertainty_threshold: 0.45
+  disagreement_threshold: 0.25
+  borderline_margin: 0.08
   priority_bands:
     - {name: URGENT, min_score: 0.85}
     - {name: HIGH, min_score: 0.60}
     - {name: ROUTINE, min_score: 0.0}
-  # How many top suspicious regions to surface in the report.
   max_review_regions: 10
 
+grading:
+  moderate_case_score: 0.55
+  high_case_score: 0.80
+
+qc:
+  background_intensity_cutoff: 220
+  min_tissue_coverage: 0.05
+  min_blur_score: 8.0
+  min_stain_range: 8.0
+
 report:
-  # Probabilities are only advisory; this text is stamped on every draft.
   disclaimer: >-
-    DECISION SUPPORT DRAFT - not a diagnosis. All findings require review and
+    PATHOLOGY ASSISTANT DRAFT — for pathologist review and sign-off. Not a final diagnosis.
     approval by a qualified pathologist before entering the medical record.
 
 audit:
-  # Where run records / review decisions are written (kept out of git).
   store_dir: runs

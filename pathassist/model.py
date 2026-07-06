@@ -82,7 +82,7 @@ def load_checkpoint(path: str | Path, device: str = "cpu"):
   """
   import torch
 
-  payload = torch.load(Path(path), map_location="cpu")
+  payload = torch.load(Path(path), map_location="cpu", weights_only=False)
   if payload.get("checkpoint_format") != CHECKPOINT_FORMAT:
     raise ValueError(
       f"Unsupported checkpoint format {payload.get('checkpoint_format')!r}; "

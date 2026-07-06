@@ -1,0 +1,207 @@
+# Training data catalog — one row per organ for Colab / pathassist.train.
+# auto_download: true  → `load_organ_training_data()` fetches via Hugging Face datasets.
+# auto_download: false → prepare tiles locally under DATA_DIR (benign/ + malignant/).
+
+organs:
+  lymph_node:
+    name: Lymph Node
+    auto_download: true
+    loader: patchcamelyon
+    hf_dataset: 1aurent/PatchCamelyon
+    hf_split: train
+    hf_test_split: test
+    hf_url: https://huggingface.co/datasets/1aurent/PatchCamelyon
+    tile_size: 96
+    approx_tiles: 262144
+    task: Binary metastasis vs normal (lymph node)
+    notes: Default model — same data as your current ensemble.
+
+  breast:
+    name: Breast
+    auto_download: true
+    loader: bach
+    hf_dataset: 1aurent/BACH
+    hf_split: train
+    hf_test_split: train
+    hf_url: https://huggingface.co/datasets/1aurent/BACH
+    tile_size: 256
+    approx_tiles: 400
+    task: Binary malignancy (InSitu+Invasive vs Normal+Benign)
+    notes: HF test split is unlabeled; holdout sample from train. Good quick second-organ proof.
+
+  gastrointestinal:
+    name: Gastrointestinal
+    auto_download: true
+    loader: nct_crc_he
+    hf_dataset: 1aurent/NCT-CRC-HE
+    hf_split: NCT_CRC_HE_100K
+    hf_test_split: CRC_VAL_HE_7K
+    hf_url: https://huggingface.co/datasets/1aurent/NCT-CRC-HE
+    tile_size: 224
+    approx_tiles: 100000
+    task: Binary tumor vs normal colon mucosa (TUM vs NORM)
+    notes: Recommended next train — large public CRC patch set.
+
+  pulmonary:
+    name: Pulmonary
+    auto_download: true
+    loader: lc25000_lung
+    hf_dataset: 1aurent/LC25000
+    hf_split: train
+    hf_test_split: train
+    hf_url: https://huggingface.co/datasets/1aurent/LC25000
+    tile_size: 256
+    approx_tiles: 12500
+    task: Lung adeno/squamous vs benign (lung subset only)
+    notes: LC25000 also contains colon — loader filters organ=lung.
+
+  genitourinary:
+    name: Genitourinary
+    auto_download: false
+    loader: folder
+    manual_url: https://panda.grand-challenge.org/
+    manual_url_alt: https://www.kaggle.com/c/prostate-cancer-grade-assessment
+    tile_size: 256
+    approx_tiles: null
+    task: Prostate ISUP grading (needs tile extraction from WSI)
+    notes: No ready-made HF tile set. Download PANDA, extract patches to benign/malignant folders.
+
+  gynecologic:
+    name: Gynecologic
+    auto_download: false
+    loader: folder
+    manual_url: https://www.cancerimagingarchive.net/
+    tile_size: 256
+    approx_tiles: null
+    task: Organ-specific tiles required
+    notes: Use hospital or TCIA slides; export patches to DATA_DIR.
+
+  dermatopathology:
+    name: Dermatopathology
+    auto_download: false
+    loader: folder
+    manual_url: https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000
+    tile_size: 256
+    approx_tiles: null
+    task: Skin lesion classification
+    notes: HAM10000 is dermoscopy (not H&E). Map classes to benign/malignant folders.
+
+  hematopathology:
+    name: Hematopathology
+    auto_download: false
+    loader: folder
+    manual_url: https://www.kaggle.com/datasets/paultimothymooney/blood-cells
+    tile_size: 256
+    approx_tiles: null
+    task: Blood/marrow cell images — different from H&E lymph tiles
+    notes: Not equivalent to lymph-node PCam; use curated marrow tiles if available.
+
+  head_neck:
+    name: Head & Neck
+    auto_download: false
+    loader: folder
+    manual_url: https://www.cancerimagingarchive.net/
+    tile_size: 256
+    approx_tiles: null
+    task: H&N H&E tiles
+    notes: No verified public HF patch benchmark; use local DATA_DIR.
+
+  neuropathology:
+    name: Neuropathology
+    auto_download: false
+    loader: folder
+    manual_url: https://www.kaggle.com/datasets/mahmoudreda55/brain-tumor-dataset
+    tile_size: 256
+    approx_tiles: null
+    task: Brain tumor patches
+    notes: Mostly MRI in public sets; prefer H&E neuropath tiles in DATA_DIR.
+
+  soft_tissue:
+    name: Soft Tissue
+    auto_download: false
+    loader: folder
+    manual_url: https://www.cancerimagingarchive.net/
+    tile_size: 256
+    approx_tiles: null
+    task: Sarcoma screening
+    notes: Manual patch curation required.
+
+  cardiovascular:
+    name: Cardiovascular
+    auto_download: false
+    loader: folder
+    manual_url: https://www.cancerimagingarchive.net/
+    tile_size: 256
+    approx_tiles: null
+    task: Cardiac/vascular H&E
+    notes: No standard public tile downloader wired yet.
+
+  endocrine:
+    name: Endocrine
+    auto_download: false
+    loader: folder
+    manual_url: https://www.cancerimagingarchive.net/
+    tile_size: 256
+    approx_tiles: null
+    task: Thyroid/adrenal H&E
+    notes: Manual DATA_DIR.
+
+  cancer_genomics:
+    name: Cancer Genomics
+    auto_download: false
+    loader: folder
+    manual_url: https://www.cancerimagingarchive.net/
+    tile_size: 256
+    approx_tiles: null
+    task: Genomics-correlated histology
+    notes: Requires matched molecular labels + tiles.
+
+  cytopathology:
+    name: Cytopathology
+    auto_download: false
+    loader: folder
+    manual_url: https://www.kaggle.com/datasets/paultimothymooney/cervical-cancer-largest-dataset-sipakmed
+    tile_size: 256
+    approx_tiles: null
+    task: Cytology (Pap) — different stain
+    notes: Not H&E; separate QC rules apply.
+
+  infectious_disease:
+    name: Infectious Disease
+    auto_download: false
+    loader: folder
+    manual_url: https://www.cancerimagingarchive.net/
+    tile_size: 256
+    approx_tiles: null
+    task: Infectious patterns in tissue
+    notes: Manual DATA_DIR.
+
+  mediastinum:
+    name: Mediastinum
+    auto_download: false
+    loader: folder
+    manual_url: https://www.cancerimagingarchive.net/
+    tile_size: 256
+    approx_tiles: null
+    task: Mediastinal/thymic H&E
+    notes: Manual DATA_DIR.
+
+  orthopedic:
+    name: Orthopedic
+    auto_download: false
+    loader: folder
+    manual_url: https://www.cancerimagingarchive.net/
+    tile_size: 256
+    approx_tiles: null
+    task: Bone/soft-tissue bone lesions
+    notes: Manual DATA_DIR.
+
+  peritoneal:
+    name: Peritoneal
+    auto_download: false
+    loader: folder
+    manual_url: https://www.cancerimagingarchive.net/
+    tile_size: 256
+    approx_tiles: null
+    task: Peritoneal malignancy
+    notes: Manual DATA_DIR.

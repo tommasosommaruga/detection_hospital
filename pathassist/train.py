@@ -234,12 +234,30 @@ def build_parser() -> argparse.ArgumentParser:
   parser.add_argument("--device", default="auto", choices=["auto", "cuda", "mps", "cpu"])
   parser.add_argument("--version", default="0.1.0")
   parser.add_argument("--out", default="models/tile_classifier.pt")
+  parser.add_argument(
+    "--organ",
+    default=None,
+    help="Organ id from config/organs.yaml — saves to models/<organ>/ensemble.pt when set.",
+  )
   parser.add_argument("--seed", type=int, default=0)
   return parser
 
 
+def resolve_out_path(out: str, organ: str | None, root: Path | None = None) -> str:
+  if organ:
+    from .organs import load_organ_registry, normalize_organ_id
+
+    registry = load_organ_registry(root)
+    organ_id = normalize_organ_id(organ)
+    spec = registry.get(organ_id)
+    return str(spec.checkpoint)
+  return out
+
+
 def main(argv: list[str] | None = None) -> int:
   args = build_parser().parse_args(argv)
+  root = Path(__file__).resolve().parents[1]
+  out_path = resolve_out_path(args.out, args.organ, root=root)
   tiles, labels = build_dataset(
     source=args.source,
     data_dir=args.data_dir,
@@ -260,7 +278,7 @@ def main(argv: list[str] | None = None) -> int:
     val_fraction=args.val_fraction,
     device_preference=args.device,
     version=args.version,
-    out_path=args.out,
+    out_path=out_path,
     seed=args.seed,
     tiles=tiles,
     labels=labels,

@@ -1,0 +1,3 @@
+-r requirements-prod.txt
+pytest>=8.0
+httpx>=0.27

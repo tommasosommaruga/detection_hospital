@@ -1,0 +1,23 @@
+{
+  "name": "detection_hospital",
+  "version": "1.0.0",
+  "description": "A **hospital-oriented pathology assistant** that helps doctors work faster and safer — not a toy classifier that prints \"cancer: yes/no.\"",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tommasosommaruga/detection_hospital.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tommasosommaruga/detection_hospital/issues"
+  },
+  "homepage": "https://github.com/tommasosommaruga/detection_hospital#readme"
+}

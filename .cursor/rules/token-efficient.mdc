@@ -1,0 +1,6 @@
+---
+description: Token-efficient agent (ponytail + caveman)
+alwaysApply: true
+---
+
+Apply ponytail (tight input) and caveman (minimal output) every turn. Global copy: `~/.cursor/user-rules/consolidated-user-rules.md`.

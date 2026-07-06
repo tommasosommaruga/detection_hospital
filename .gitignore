@@ -11,10 +11,15 @@ env/
 .cache
 .firecrawl
 # Data & model artifacts (never commit patient data or large binaries)
-data/
+data/*
 !data/.gitkeep
-models/
-!models/.gitkeep
+!data/benchmarks/
+data/benchmarks/**
+!data/benchmarks/**/
+!data/benchmarks/**/.gitkeep
+models/**
+!models/**/
+!models/**/.gitkeep
 outputs/
 !outputs/.gitkeep
 *.svs
@@ -29,8 +34,22 @@ outputs/
 runs/
 *.log
 
-# Notebooks checkpoints
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
 .ipynb_checkpoints/
+
+# Node (UI smoke tests: npm install playwright)
+node_modules/
+.playwright/
+
+# Test cache
+.pytest_cache/
+.coverage
+htmlcov/
 
 # OS / editor
 .DS_Store

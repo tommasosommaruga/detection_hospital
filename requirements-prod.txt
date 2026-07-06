@@ -1,0 +1,10 @@
+numpy>=1.24
+pillow>=10.0
+pyyaml>=6.0
+torch>=2.2
+torchvision>=0.17
+matplotlib>=3.7
+fastapi>=0.110
+uvicorn[standard]>=0.27
+python-multipart>=0.0.9
+openslide-python>=1.3

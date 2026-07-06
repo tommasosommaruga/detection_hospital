@@ -1,0 +1,16 @@
+---
+description: PathAssist demo UI — read rules before editing demo/static
+globs:
+  - demo/static/**
+  - scripts/ui_smoke_test.mjs
+---
+
+Before changing PathAssist workstation UI, **read and follow**:
+
+`docs/pathassist-ui-rules.md`
+
+Required after UI edits:
+1. Check the **Do NOT** list for regressions
+2. Bump `?v=N` in `demo/static/index.html`
+3. Run `node scripts/ui_smoke_test.mjs`
+4. Append a line to the **Changelog** in that doc

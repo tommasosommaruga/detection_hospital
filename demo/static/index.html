@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PathAssist — Digital Pathology Workstation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/app.css?v=68" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="sidebar-backdrop" id="sidebar-backdrop" hidden aria-hidden="true"></div>
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <button class="panel-toggle sidebar-toggle" id="sidebar-collapse" type="button" aria-label="Collapse navigation" aria-expanded="true" title="Collapse navigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="brand" id="brand-toggle" role="button" tabindex="0" title="Click to collapse navigation" aria-label="Toggle navigation sidebar">
+        <div class="brand-mark" aria-hidden="true">PA</div>
+        <div class="brand-text">
+          <h1>PathAssist</h1>
+          <p>Clinical pathology workstation</p>
+        </div>
+      </div>
+      <div class="sidebar-scroll">
+      <nav class="nav-section">
+        <span class="nav-label">Workflow</span>
+        <ul class="nav">
+          <li><a href="#" data-view="dashboard" class="active" title="Overview"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="nav-text">Overview</span></a></li>
+          <li><a href="#" data-view="review" title="Case Review"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg><span class="nav-text">Case Review</span></a></li>
+          <li><a href="#" data-view="worklist" title="Worklist"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span class="nav-text">Worklist</span></a></li>
+          <li><a href="#" data-view="datasets" title="Dataset Hub"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg><span class="nav-text">Dataset Hub</span></a></li>
+        </ul>
+      </nav>
+      <nav class="nav-section">
+        <span class="nav-label">Quality</span>
+        <ul class="nav">
+          <li><a href="#" data-view="validation" title="Validation"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span class="nav-text">Validation</span></a></li>
+          <li><a href="#" data-view="insights" title="Insights"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg><span class="nav-text">Insights</span></a></li>
+        </ul>
+      </nav>
+      </div>
+      <div class="sidebar-footer" id="status-footer"><span class="status-footer-text">Connecting…</span></div>
+      <div class="organ-sidebar-block" id="organ-sidebar-block" hidden>
+        <label class="nav-label" for="organ-sidebar-select">Active organ model</label>
+        <select id="organ-sidebar-select" class="organ-select" aria-label="Active organ model"></select>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="nav-toggle btn btn-ghost" id="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="topbar-left">
+          <h2 id="page-title">Overview</h2>
+          <p class="topbar-sub" id="page-subtitle">System status and model performance</p>
+        </div>
+        <div class="organ-context-bar" id="organ-context-bar" hidden aria-live="polite">
+          <span class="organ-context-label">Analyzing</span>
+          <span class="organ-badge" id="organ-context-badge">—</span>
+          <span class="organ-model-hint" id="organ-model-hint"></span>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost" id="btn-warm" type="button">Warm cache</button>
+          <button class="btn btn-primary" id="btn-full-test" type="button">Run benchmark</button>
+          <button class="btn btn-ghost" id="btn-export" type="button">Export corrections</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section id="view-dashboard" class="view active">
+          <div id="dash-mission"></div>
+          <div class="grid-4" id="dash-stats"></div>
+          <div class="grid-2 dash-lower">
+            <div id="dash-model"></div>
+            <div id="dash-quick"></div>
+          </div>
+        </section>
+
+        <section id="view-review" class="view">
+          <div class="review-workspace">
+            <aside class="case-rail" id="case-rail" aria-label="Case browser">
+              <button class="case-rail-toggle" id="case-rail-toggle" type="button" aria-label="Collapse case browser" aria-expanded="true" aria-controls="case-rail-content" title="Hide case list">
+                <svg class="case-rail-toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M15 18l-6-6-6-6"/></svg>
+                <span class="case-rail-toggle-label">Cases</span>
+              </button>
+              <div class="rail-collapsed-actions" id="case-rail-collapsed-actions" hidden>
+                <button type="button" class="rail-icon-btn" id="case-rail-upload" title="Upload tile" aria-label="Upload tile">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                </button>
+              </div>
+              <div class="rail-content" id="case-rail-content">
+              <div class="rail-block ingest-panel" id="ingest-panel">
+                <h3 class="ingest-title">Organ / upload</h3>
+                <div class="ingest-body" id="ingest-body">
+                  <select id="organ-select" class="organ-select" aria-required="true" aria-label="Organ or specialty" aria-describedby="organ-help">
+                    <option value="">Loading organs…</option>
+                  </select>
+                  <p class="organ-help" id="organ-help">Required before upload. Must match the tissue in the image.</p>
+                  <div class="upload-compact" id="upload-zone" role="button" tabindex="0" aria-disabled="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <span>Upload tile</span>
+                    <input type="file" id="file-input" accept="image/*,.svs,.ndpi,.mrxs,.scn,.tif,.tiff" hidden />
+                  </div>
+                </div>
+              </div>
+              <div class="rail-block rail-grow">
+                <div class="rail-head">
+                  <h3>Cases</h3>
+                  <div class="filters" id="sample-filters">
+                    <button class="filter-chip active" data-filter="all" type="button">All</button>
+                    <button class="filter-chip" data-filter="metastasis" type="button">+</button>
+                    <button class="filter-chip" data-filter="normal" type="button">−</button>
+                  </div>
+                </div>
+                <div class="case-list" id="sample-grid"></div>
+              </div>
+              </div>
+            </aside>
+
+            <div class="review-body" id="review-body">
+              <div class="empty-state empty-review">
+                <div class="empty-icon" aria-hidden="true">◎</div>
+                <h3>Select a case</h3>
+                <p>Pick a tile from the list or upload histology to review triage, overlays, and sign-off.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-worklist" class="view">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Priority worklist</h3>
+              <p>Cases ranked by clinical urgency.</p>
+            </div>
+            <div id="worklist-body"></div>
+          </div>
+        </section>
+
+        <section id="view-datasets" class="view">
+          <div id="datasets-body">
+            <div class="empty-state">Loading dataset catalog…</div>
+          </div>
+        </section>
+
+        <section id="view-validation" class="view">
+          <div id="validation-body">
+            <div class="empty-state">Run the benchmark — metrics use production recall-first thresholds (not 0.5)</div>
+          </div>
+        </section>
+
+        <section id="view-insights" class="view">
+          <div id="insights-body">
+            <div class="empty-state">Loading dataset insights…</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-overlay" id="loading" role="status" aria-live="polite">
+    <div class="spinner"></div>
+    <p id="loading-msg">Running pipeline…</p>
+  </div>
+  <div class="toast" id="toast" role="alert"></div>
+  <dialog class="confirm-dialog" id="confirm-dialog" aria-labelledby="confirm-title">
+    <h3 id="confirm-title">Clear annotations?</h3>
+    <p id="confirm-message">Remove all ink marks on this slide. This cannot be undone.</p>
+    <div class="confirm-actions">
+      <button type="button" class="btn btn-ghost" id="confirm-cancel">Keep marks</button>
+      <button type="button" class="btn btn-primary" id="confirm-ok">Clear all</button>
+    </div>
+  </dialog>
+  <dialog class="confirm-dialog" id="organ-mismatch-dialog" aria-labelledby="organ-mismatch-title">
+    <h3 id="organ-mismatch-title">Organ mismatch detected</h3>
+    <p id="organ-mismatch-message"></p>
+    <div class="confirm-actions">
+      <button type="button" class="btn btn-ghost" id="organ-mismatch-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="organ-mismatch-confirm">Proceed anyway</button>
+    </div>
+  </dialog>
+  <script src="/static/viewer.js?v=68"></script>
+  <script src="/static/app.js?v=68"></script>
+</body>
+</html>

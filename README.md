@@ -1,24 +1,33 @@
-# Digital Pathology Assistant
+# PathAssist — Digital Pathology Assistant
 
-A decision-support scaffold for pathology, built around one principle: **augment
-the pathologist, don't replace them.** The system finds and ranks suspicious
-regions, drafts a report, and records every step for review — it never finalises
-a diagnosis.
+A **hospital-oriented pathology assistant** that helps doctors work faster and
+safer — not a toy classifier that prints "cancer: yes/no."
 
-This is a foundation to build on, not a finished clinical product. It runs today
-on synthetic data with no model weights, and it supports training a model on a
-GPU (e.g. Google Colab) that then runs smoothly on a CPU.
+It is built around what hospitals actually need:
+
+- **Triage** — scan cases, prioritize urgent slides, reduce missed critical diagnoses
+- **Explainability** — heatmaps, uncertainty, ranked regions so pathologists can verify quickly
+- **Second reader** — flag disagreements between AI and pathologist after sign-off
+- **QC** — catch blurry, understained, or low-tissue slides before they waste review time
+- **Report drafting** — structured draft the pathologist edits and signs
+- **Continuous learning** — corrections exported for retraining
+
+The pathologist remains in control. The assistant removes repetitive visual search,
+surfaces what matters first, and creates an audit trail for safety and improvement.
 
 ## Pipeline
 
 ```
 whole-slide image
     -> tiling            split slide into tiles, drop background
-    -> region scoring     model assigns a malignancy score per tile
-    -> case triage        aggregate to a case score + priority, rank regions
-    -> explainability     heatmap overlay of scores on the slide
-    -> report drafting     human-readable draft, clearly marked "not a diagnosis"
-    -> human approval      pathologist decision recorded in the audit trail
+    -> quality control    blur / tissue coverage / staining checks
+    -> region scoring     ensemble or single model scores each tile
+    -> case triage        priority band, uncertainty flags, ranked regions
+    -> severity grading   advisory grade estimate (not clinical sign-out)
+    -> explainability     score heatmap + uncertainty map
+    -> report drafting    structured draft with recommended actions
+    -> human approval     pathologist decision recorded in audit trail
+    -> continuous learning export corrections for retraining
 ```
 
 Each stage is a separate module and is independently testable. The only piece you
@@ -31,7 +40,11 @@ stays the same.
 config/default.yaml     all thresholds & workflow knobs (nothing clinical hardcoded)
 pathassist/
   tiling.py             cut a slide into tiles (swap in OpenSlide for real WSIs)
-  scoring.py            Scorer protocol + DummyScorer (no weights) + TorchScorer
+  scoring.py            Scorer protocol + Dummy / Torch / EnsembleScorer
+  backbone.py           configurable CNN + ResNet/EfficientNet builders
+  ensemble.py           weighted ensemble loader (ensemble.pt format 3)
+  qc.py                 slide quality checks
+  grading.py            advisory severity estimate
   model.py              the CNN + CPU-loadable checkpoint save/load
   preprocess.py         one transform shared by training and inference
   device.py             auto GPU/CPU/MPS selection
@@ -63,6 +76,25 @@ python -m pathassist.cli worklist
 
 Outputs (heatmap + report draft) land in `outputs/`; the audit trail is in `runs/`.
 
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+PYTHONPATH=. pytest tests/ -v
+```
+
+48 tests — pipeline, detection, API, auth, WSI helpers. CI runs on push via GitHub Actions.
+
+## Production deployment
+
+```bash
+cp .env.example .env
+# Edit PATHASSIST_API_KEY; mount models/ (per-organ checkpoints)
+docker compose up --build -d
+```
+
+See [guide.md](guide.md) for full runbook, recall tuning, and hospital integration roadmap.
+
 ## Train on GPU (Colab), run on CPU
 
 The workflow is designed so a model trained on a GPU runs unchanged on a CPU:
@@ -80,7 +112,15 @@ python -m pathassist.train --epochs 10 --tile-size 64 --out models/tile_classifi
 # device defaults to "auto": GPU if present, else CPU
 ```
 
-Run inference on CPU with the trained checkpoint:
+Run inference with the trained **ensemble** (recommended):
+
+```bash
+python -m pathassist.cli run \
+    --case-id CASE-001 --image path/to/slide.png \
+    --scorer ensemble --checkpoint models/lymph_node/ensemble.pt --device cpu
+```
+
+Or with the older single-model checkpoint:
 
 ```bash
 python -m pathassist.cli run \
@@ -115,12 +155,12 @@ what turns a demo into something deployable:
   pathologist overrode the model.
 - **Continuous learning**: those corrections become the next training set.
 
-## What this is *not*
+## What this is *not* (yet)
 
-Not a diagnostic device. No clinical validation, no regulatory clearance, no
-patient-data handling beyond a caller-supplied case id. The `DummyScorer` and the
-synthetic data carry no clinical meaning. Treat this as engineering scaffolding
-for a real, validated system.
+Not an autonomous pathologist. Not regulatory-cleared for unsupervised diagnosis.
+Requires hospital validation, LIS integration, and governance before clinical
+deployment. The current PCam ensemble is a strong engineering baseline — WSI
+support and local validation are the next steps toward real adoption.
 
 ## Tests
 
